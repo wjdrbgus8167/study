@@ -1,39 +1,56 @@
-import java.util.Scanner;
-import java.io.FileInputStream;
- 
-class Solution
-{
-    public static void main(String args[]) throws Exception
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+class Solution{
+	
+
+    public static void main(String[] args)throws IOException 
     {
-        Scanner sc = new Scanner(System.in);
-        int T;
-        T=sc.nextInt();
- 
-        for(int test_case = 1; test_case <= T; test_case++)
-        {
-            long n = sc.nextLong();
-            int d = sc.nextInt();
-            int g = sc.nextInt();
-             
-            if(d != 0 && g==0){
-                System.out.println("#" + test_case + " " + "Broken");
-            }else if(d != 100 && g==100){
-                System.out.println("#" + test_case + " " + "Broken");
-            } else {
-                boolean flag = false;
-                for (int i = 1; i <= n; i++) {
-                    if ((i * d) / 100 == (i * d) / 100.0) { 
-                        flag = true;
-                        break;
-                    }
-                }
- 
-                if (flag) {
-                    System.out.println("#" + test_case + " " + "Possible");
-                } else {
-                    System.out.println("#" + test_case + " " + "Broken");
-                }
-            }
-        }
+       
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	
+    	int t = Integer.parseInt(br.readLine());
+    	StringBuilder sb = new StringBuilder();
+    	
+    	for(int testcase=1;testcase<=t;testcase++)
+    	{
+    		StringTokenizer st = new StringTokenizer(br.readLine()," ");
+    		
+    		long n = Long.parseLong(st.nextToken());
+    		int pd = Integer.parseInt(st.nextToken());
+    		int pg = Integer.parseInt(st.nextToken());
+    		
+    		boolean flag =false;
+    		if(pd !=0&&pg==0)
+    		{
+    			sb.append("#"+testcase+" "+"Broken").append("\n");
+    			
+    		}else if(pd!=100&&pg==100)
+    		{
+    			sb.append("#"+testcase+" "+"Broken").append("\n");
+    			
+    		}else {
+    			
+    			for (int i = 1; i <= n; i++) 
+    			{  	
+    				if ((i * pd)/100==(i * pd)/100.0 ) 
+    			    {
+    			        flag = true;
+    			        break;
+    			    }
+    			}
+    			if(flag==true)
+        		{
+        			sb.append("#"+testcase+" "+"Possible").append("\n");
+        		}else {
+        			sb.append("#"+testcase+" "+"Broken").append("\n");
+        		}
+    		}
+    		
+    		
+    	}
+    	System.out.println(sb);
     }
 }

@@ -17,6 +17,7 @@ public class Main {
 		k = Integer.parseInt(br.readLine());
 		
 		StringTokenizer st = new StringTokenizer(br.readLine());
+		// 부등호 저장 배열
 		calculate = new String[k];
 		
 		for(int i=0;i<k;i++)
@@ -33,40 +34,40 @@ public class Main {
 	}
 	public static void sequence(int cnt)
 	{
-		// M만큼 cnt 충족 -> 뽑기 끝
+		// k+1만큼 cnt 충족 -> 뽑기 끝
 		if(cnt==k+1)
 		{
-			// StringBuilder로 한번에 출력 // 시간 차이 큼
+			
 			sb = new StringBuilder();
-			int depth=0;
+			// depth가 K번 만족하면 통과
+			//int depth=0;
 			for(int i=0;i<k;i++)
 			{
 				if(calculate[i].equals(">"))
 				{
 					if(seq_num[i]>seq_num[i+1])
 					{
-						depth++;
+						continue;
 					}else {
 						return;
 					}
 				}else if(calculate[i].equals("<")) {
 					if(seq_num[i]<seq_num[i+1])
 					{
-						depth++;
+						continue;
 					}else {
 						return;
 					}
 				}
 			}
-			if(depth==k)
-			{
+			
 				for(int num :seq_num)
 				{
 					sb.append(num);
 				}
 				
 				que.add(sb.toString());
-			}
+			
 			return;
 		}
 		// N개의 숫자 탐색

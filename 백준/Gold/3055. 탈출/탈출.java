@@ -1,3 +1,5 @@
+
+
 import java.io.*;
 import java.util.*;
 
@@ -94,22 +96,23 @@ public class Main {
 			
 			int temp= que.size();
 				
+			int size = water.size();
+			
+			for(int i=0;i<size;i++) {
+				Point1 p2 =  water.poll();
+				waterspread(p2.x,p2.y);
+			
+			}
+			
 			for(int k=0;k<temp;k++) {
 				
-				Point1 p1 =null;
-				
-				
-				if(map[que.peek().x][que.peek().y]=='*') {
-					que.poll();
-				}else {
-					p1 = que.poll();
-				}
-				
-				if(p1!=null) {
-					if(p1.x==homeIdx&&p1.y==homeIdy) {
+				Point1 p1 =que.poll();
+			
+			
+				if(p1.x==homeIdx&&p1.y==homeIdy) {
 						
-						return distance[p1.x][p1.y];
-					}
+					return distance[p1.x][p1.y];
+				}
 					
 					for(int i=0;i<4;i++) {
 						
@@ -132,17 +135,10 @@ public class Main {
 						}
 								
 					}	
-				}
+				
 				
 			}
-			
-			int size = water.size();
-			
-			for(int i=0;i<size;i++) {
-				Point1 p2 =  water.poll();
-				waterspread(p2.x,p2.y);
-			
-			}
+	
 					
 		}
 		return -1;
@@ -150,13 +146,14 @@ public class Main {
 	}
 	public static void waterspread(int x,int y) {
 	
+		
 		for(int i=0;i<4;i++) {
 			
 			int nx = dx[i]+x;
 			int ny = dy[i]+y;
 			
 			if(boundcheck(nx,ny)) {
-				if(map[nx][ny]=='.'||map[nx][ny]=='S') {
+				if(map[nx][ny]=='.') {
 					
 					map[nx][ny] = '*';
 					water.add(new Point1(nx,ny));

@@ -1,69 +1,66 @@
 import java.io.*;
 import java.util.*;
 
-
-class Main{
+public class Main{
 
     static int N,K;
+    static final int Max=200000;
+    static int[] dx;
     static int min_day;
-    static int Max =200000;
-    static boolean[] visited;
-
     public static void main(String[] args)throws IOException{
 
-        BufferedReader br  = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
+        N= Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        visited = new boolean[Max+1];
+        dx = new int[Max+1];
         min_day = 0;
 
-        if(N>=K){
-            System.out.println(N-K);
-        }else{
-            bfs();
-            System.out.println(min_day);
-        }
+        bfs();
 
+        System.out.println(min_day);
     }
 
-    public static void bfs() {
+    public static void bfs(){
 
-        int[] dist = new int[Max + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        ArrayDeque<Integer> dq = new ArrayDeque<>();
+        ArrayDeque<Integer> que = new ArrayDeque<>();
+        Arrays.fill(dx,Integer.MAX_VALUE);
 
-        dist[N] = 0;
-        dq.add(N);
+        dx[N] = 0;
+        que.add(N);
 
-        while (!dq.isEmpty()) {
+        while(!que.isEmpty()){
 
-            int x = dq.pollFirst();
-            if (x == K) min_day=dist[x];
+            int next_dx = que.poll();
 
-            int nx = x * 2;
-
-            if (nx <= Max && dist[nx] > dist[x]) {
-                dist[nx] = dist[x];
-                dq.addFirst(nx);
+            if(next_dx==K){
+                min_day = dx[next_dx];
             }
 
-            nx = x - 1;
+            int move = next_dx*2;
 
-            if (nx >= 0 && dist[nx] > dist[x] + 1) {
-                dist[nx] = dist[x] + 1;
-                dq.addLast(nx);
+            if(move<=Max&&dx[move]>dx[next_dx]){
+                dx[move] = dx[next_dx];
+                que.add(move);
             }
 
-            nx = x + 1;
+            move = next_dx-1;
 
-            if (nx <= Max && dist[nx] > dist[x] + 1) {
-                dist[nx] = dist[x] + 1;
-                dq.addLast(nx);
+            if(0<=move&&dx[move]>dx[next_dx]+1){
+                dx[move] = dx[next_dx]+1;
+                que.add(move);
             }
+
+            move = next_dx+1;
+
+            if(move<=Max && dx[move]>dx[next_dx]+1){
+                dx[move] = dx[next_dx]+1;
+                que.add(move);
+            }
+
         }
-        return ;
+
     }
 }

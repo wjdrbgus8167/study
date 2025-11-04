@@ -61,17 +61,10 @@ class Main{
 
                 int sub_endPoint = Integer.parseInt(br.readLine());
 
-                // s까지의 최단경로
-                int[] distS = djk(s);
-                // g까지의최단 경로
-                int[] distG = djk(g);
-                //h까지의 최단 경로
-                int[] distH = djk(h);
+                int o_cost = djk(s,sub_endPoint);
 
-                int o_cost = distS[sub_endPoint];
-
-                int g_cost = distS[g] + distG[h] + distH[sub_endPoint];
-                int h_cost = distS[h] + distH[g] + distG[sub_endPoint];
+                int g_cost = djk(g,sub_endPoint)+djk(s,h)+djk(h,g);
+                int h_cost = djk(h,sub_endPoint)+djk(s,g)+djk(g,h);
 
 
                 if(g_cost==o_cost||h_cost==o_cost){
@@ -81,7 +74,6 @@ class Main{
             }
 
             while (!result.isEmpty()) sb.append(result.poll()).append(' ');
-
             sb.append("\n");
         }
 
@@ -90,7 +82,7 @@ class Main{
 
 
     // 교차로 노드까지의 최단 경로
-    public static int[] djk(int start_point){
+    public static int djk(int start_point,int end_point){
 
         PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->Integer.compare(a[1],b[1]));
         int[] dist = new int[n+1];
@@ -109,6 +101,7 @@ class Main{
             int cur_point = cur[0];
             int cur_cost = cur[1];
 
+            if(cur_point==end_point) return cur_cost;
 
             if(dist[cur_point]<cur_cost) continue;
 
@@ -129,9 +122,9 @@ class Main{
 
         }
 
-        return dist;
+        return -1;
 
     }
 
-
+    
 }

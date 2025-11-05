@@ -2,22 +2,22 @@ import java.io.*;
 import java.util.*;
 
 
-class Main{
+class Main {
 
-    static int n,m,t;
-    static int s,g,h;
+    static int n, m, t;
+    static int s, g, h;
 
     static ArrayList<int[]> graph[];
 
-    public static void main(String[] args)throws IOException{
+    public static void main(String[] args) throws IOException {
 
-        BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
         int tc = Integer.parseInt(br.readLine());
         StringTokenizer st;
 
-        for(int i=0;i<tc;i++){
+        for (int i = 0; i < tc; i++) {
 
             st = new StringTokenizer(br.readLine());
 
@@ -37,62 +37,55 @@ class Main{
             g = Integer.parseInt(st.nextToken());
             h = Integer.parseInt(st.nextToken());
 
-            graph= new ArrayList[n+1];
+            graph = new ArrayList[n + 1];
 
-            for(int j=1;j<=n;j++) graph[j] = new ArrayList<>();
+            for (int j = 1; j <= n; j++) graph[j] = new ArrayList<>();
 
 
-            for(int j=0;j<m;j++){
+            for (int j = 0; j < m; j++) {
 
                 st = new StringTokenizer(br.readLine());
 
                 int a = Integer.parseInt(st.nextToken());
                 int b = Integer.parseInt(st.nextToken());
-                int d = Integer.parseInt(st.nextToken());
+                int d = Integer.parseInt(st.nextToken())<<1;
 
-                graph[a].add(new int[]{b,d});
-                graph[b].add(new int[]{a,d});
+                if((a==g&&b==h)||(a==h&&b==g)) d--;
+
+                graph[a].add(new int[]{b, d});
+                graph[b].add(new int[]{a, d});
 
             }
 
-            PriorityQueue<Integer> result = new PriorityQueue<>((a,b)->Integer.compare(a,b));
+            List<Integer> result = new ArrayList<>();
 
             for(int j=0;j<t;j++){
 
-                int sub_endPoint = Integer.parseInt(br.readLine());
+                int sub = Integer.parseInt(br.readLine());
+                int cost = djk(s,sub);
 
-                int o_cost = djk(s,sub_endPoint);
-
-                int g_cost = djk(g,sub_endPoint)+djk(s,h)+djk(h,g);
-                int h_cost = djk(h,sub_endPoint)+djk(s,g)+djk(g,h);
-
-
-                if(g_cost==o_cost||h_cost==o_cost){
-                    result.add(sub_endPoint);
-                }
-
+                if(cost%2==1) result.add(sub);
             }
 
-            while (!result.isEmpty()) sb.append(result.poll()).append(' ');
+            Collections.sort(result);
+
+            for(int a: result) sb.append(a+" ");
+
             sb.append("\n");
         }
-
         System.out.println(sb);
     }
 
-
-    // 교차로 노드까지의 최단 경로
-    public static int djk(int start_point,int end_point){
+    public static int djk(int start, int end){
 
         PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->Integer.compare(a[1],b[1]));
+
         int[] dist = new int[n+1];
 
         Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[start] = 0;
 
-        dist[start_point] = 0;
-
-        pq.add(new int[]{start_point,0});
-
+        pq.add(new int[]{start,0});
 
         while(!pq.isEmpty()){
 
@@ -101,30 +94,25 @@ class Main{
             int cur_point = cur[0];
             int cur_cost = cur[1];
 
-            if(cur_point==end_point) return cur_cost;
+            if(cur_point==end ) return cur_cost ;
 
             if(dist[cur_point]<cur_cost) continue;
 
-            for(int[] a : graph[cur_point]){
+            for(int[] a: graph[cur_point]){
 
                 int next_point = a[0];
                 int next_cost = a[1]+cur_cost;
 
                 if(dist[next_point]>next_cost){
+
                     dist[next_point] = next_cost;
 
                     pq.add(new int[]{next_point,next_cost});
-
                 }
-
             }
-
 
         }
 
         return -1;
-
     }
-
-    
 }

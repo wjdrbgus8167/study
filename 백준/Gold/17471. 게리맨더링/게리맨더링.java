@@ -1,115 +1,129 @@
 import java.io.*;
 import java.util.*;
 
-public class Main{
+class Main{
 
     static int N;
-    static ArrayList<Integer> arr[];
-    static boolean visited[];
-    static int[] populations;
-    static int minPopulation;
+    static ArrayList<Integer> list[];
+    static int[] people;
+    static boolean[] visited;
+    static int result;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)throws IOException{
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
         N = Integer.parseInt(br.readLine());
-        
-        populations = new int[N+1];  // 각 구역의 인구수를 저장하는 배열
 
-        arr = new ArrayList[N+1];
-        for (int i = 1; i <= N; i++) {
-            arr[i] = new ArrayList<>();
+        list = new ArrayList[N];
+
+        for(int i=0;i<N;i++) list[i] = new ArrayList<>();
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        people = new int[N];
+        visited= new boolean[N];
+
+        for(int i=0;i<N;i++){
+            people[i] = Integer.parseInt(st.nextToken());
         }
 
-        // 각 구역의 인구수 입력
-        st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= N; i++) {
-            populations[i] = Integer.parseInt(st.nextToken());
-        }
-
-        // 인접 리스트 입력
-        for (int i = 1; i <= N; i++) {
+        for(int i=0;i<N;i++){
             st = new StringTokenizer(br.readLine());
-            int t = Integer.parseInt(st.nextToken());
+            int t= Integer.parseInt(st.nextToken());
 
-            for (int j = 0; j < t; j++) {
-                int to = Integer.parseInt(st.nextToken());
-                arr[i].add(to);
+            for(int j=0;j<t;j++){
+                int a = Integer.parseInt(st.nextToken());
+
+                list[i].add(a-1);
             }
         }
 
-        visited = new boolean[N+1];
-        minPopulation = Integer.MAX_VALUE;
+        result= Integer.MAX_VALUE;
 
-        // 부분집합 생성 및 인구 차이 계산
-        generateSubsets(1);
+        separate(0);
 
-        // 결과 출력
-        if (minPopulation == Integer.MAX_VALUE) {
+        if(result ==Integer.MAX_VALUE){
             System.out.println(-1);
-        } else {
-            System.out.println(minPopulation);
+        }else {
+            System.out.println(result);
         }
+
     }
 
-    // 부분집합을 생성하는 메서드
-    public static void generateSubsets(int cnt) {
-        if (cnt == N + 1) {
-            ArrayList<Integer> section1 = new ArrayList<>();
-            ArrayList<Integer> section2 = new ArrayList<>();
+    public static void separate(int cnt){
 
-            for (int i = 1; i <= N; i++) {
-                if (visited[i]) {
-                    section1.add(i);
-                } else {
-                    section2.add(i);
+        if(cnt==N){
+
+            ArrayList<Integer> region1 = new ArrayList<>();
+            ArrayList<Integer> region2 = new ArrayList<>();
+
+            for(int i=0;i<N;i++){
+
+                if(visited[i]){
+                    region1.add(i);
+                }else{
+                    region2.add(i);
                 }
             }
+            if (region1.size()==0||region2.size()==0) return;
 
-            if (!section1.isEmpty() && !section2.isEmpty() && 
-                isConnected(section1) && isConnected(section2)) {
-                int sectionSum1 = 0;
-                int sectionSum2 = 0;
+            if(check_region(region1)&&check_region(region2)){
+                int difference = Math.abs(sum(region1)-sum(region2));
 
-                for (int i : section1) sectionSum1 += populations[i];
-                for (int i : section2) sectionSum2 += populations[i];
-
-                int diff = Math.abs(sectionSum1 - sectionSum2);
-                minPopulation = Math.min(minPopulation, diff);
+                result = Math.min(result,difference);
             }
 
             return;
         }
 
-        visited[cnt] = true;
-        generateSubsets(cnt + 1);
 
+        visited[cnt] = true;
+        separate(cnt + 1);
         visited[cnt] = false;
-        generateSubsets(cnt + 1);
+        separate(cnt + 1);
     }
 
-    // 구역이 연결되어 있는지 확인하는 메서드
-    public static boolean isConnected(ArrayList<Integer> list) {
-        Queue<Integer> queue = new ArrayDeque<>();
-        boolean[] checked = new boolean[N+1];
+    public static int sum(ArrayList<Integer> list){
 
-        queue.offer(list.get(0));
-        checked[list.get(0)] = true;
-        int cnt = 1;
+        int sum =0;
 
-        while (!queue.isEmpty()) {
-            int current = queue.poll();
-
-            for (int neighbor : arr[current]) {
-                if (list.contains(neighbor) && !checked[neighbor]) {
-                    checked[neighbor] = true;
-                    queue.offer(neighbor);
-                    cnt++;
-                }
-            }
+        for(int i :list){
+            sum +=people[i];
         }
 
-        return cnt == list.size();
+        return sum;
+    }
+
+    public static boolean check_region(ArrayList<Integer>region){
+
+        ArrayDeque<Integer> dq = new ArrayDeque<>();
+
+        boolean[] possible = new boolean[N];
+
+        dq.add(region.get(0));
+        possible[region.get(0)] =true;
+
+        while(!dq.isEmpty()){
+
+            int cur = dq.poll();
+
+
+            for(int next : list[cur]){
+
+                if(region.contains(next) && !possible[next]){
+                    possible[next] = true;
+                    dq.add(next);
+                }
+
+            }
+
+        }
+
+        for(int a : region){
+            if(!possible[a]) return false;
+        }
+
+
+        return true;
     }
 }

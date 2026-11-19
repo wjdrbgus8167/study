@@ -38,20 +38,9 @@ class Solution {
 
             String k = e.getKey();
             int v = e.getValue();
+            
+            intersection += Math.min(v,b.getOrDefault(e.getKey(),0));
 
-            for(Map.Entry<String,Integer> e1 : b.entrySet()){
-
-                String k1 = e1.getKey();
-                int v1 = e1.getValue();
-
-
-                if(k.equals(k1)){
-
-                    intersection += Math.min(v,v1);
-                    break;
-                }
-
-            }
         }
 
         

@@ -2,88 +2,88 @@ import java.util.*;
 
 class Solution {
     
-    static int[] dx ={1,-1,0,0};
-    static int[] dy= {0,0,-1,1};
-    static StringBuilder sb = new StringBuilder();
+    static int[] dx = {1,0,-1,0};
+    static int[] dy = {0,1,0,-1};
+    static char[][] map;
     
     public int[] solution(String[][] places) {
+        
         int[] answer = new int[5];
         
-        List<int[]>list;
-        Character[][] map ;
         
         for(int i=0;i<5;i++){
-            list = new ArrayList<>();
-            map = new Character[5][5];
             
-            // 대기실 맵 생성 및 현재 사용자 위치 정보 저장 
+            map = new char[5][5];
+            List<int[]> list = new ArrayList<>();    
+            
             for(int j=0;j<5;j++){
-                
                 String s = places[i][j];
                 
                 for(int k=0;k<5;k++){
+                    map[j][k]  = s.charAt(k);
                     
-                    map[j][k] = s.charAt(k);
-                    
-                    if(s.charAt(k) =='P') list.add(new int[]{j,k});      
-            
+                    if(map[j][k]=='P') list.add(new int[]{j,k});
                 }
             }
             
-            int cnt=list.size();
-            boolean[][] visited;
             
-            for(int j=0;j<list.size();j++){
-                
-                int x = list.get(j)[0];
-                int y = list.get(j)[1];
+            boolean ok = true;
+            for(int[] a : list){
+                        
+                if(!bfs(a[0],a[1])){
+                    ok =false;
+                    break;
+                }
+            }
             
-                visited = new boolean[5][5];
-                visited[x][y] =true;
-                if(!dfs(x,y,0,map,visited)){
-                   cnt--;
-                } 
-            }
-            if(cnt!=list.size()){
-                answer[i]=0;
-            }else{
-                answer[i]=1;
-                
-            }
+           answer[i] = ok ? 1 : 0;
+            
             
         }
-        
         return answer;
+    
     }
-    public static boolean dfs(int x,int y,int depth,Character[][] map,boolean[][] visited){
+    
+    static boolean bfs(int x,int y){
         
-        if(depth>0&&map[x][y]=='P'){
-            
-            return false;
-        }
+        ArrayDeque<int[]> que = new ArrayDeque<>();
+        boolean[][] visited=  new boolean[5][5];
         
-        if(depth==2) return true;
+        que.add(new int[]{x,y,0});
+        visited[x][y] = true;
         
-        for(int i=0;i<4;i++){
+        while(!que.isEmpty()){
             
-            int nx = dx[i] + x;
-            int ny = dy[i] + y;
+            int[] a = que.poll();
+            int sn = a[0];
+            int sy = a[1];
+            int depth = a[2];
             
-            if(nx<0||nx>=5||ny<0||ny>=5||visited[nx][ny]) continue;
+    
+            if(depth==2) continue;
             
+            for(int j = 0;j<4;j++){
+                
+                int nx = dx[j] + sn;
+                int ny = dy[j] + sy;
+                
+                if(inRange(nx,ny)) continue;
+                if(visited[nx][ny]) continue;
+                
+                if(map[nx][ny]=='X') continue;
+                
+                if(map[nx][ny]=='P') return false;
             
-            if(map[nx][ny]=='X') continue;
-            
-            
-            
-            visited[nx][ny] =true;
-            
-            if (!dfs(nx, ny, depth + 1, map, visited)) {
-                    return false;
+                
+                visited[nx][ny] =true;
+                que.add(new int[]{nx,ny,depth+1});
+                
             }
         }
-        
-     
         return true;
+    }
+    
+    static boolean inRange(int x,int y){
+        return x<0||y<0||x>=5||y>=5;
     }
 }
